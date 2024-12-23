@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function ResetPassword() {
     const { resetPassword } = useContext(AuthContext);
@@ -68,9 +68,9 @@ function ResetPassword() {
                 )}
                 <p className="mt-4 text-sm text-center">
                     Remember your password?{" "}
-                    <a href="/login" className="text-blue-500 hover:underline">
+                    <Link to="/login" className="text-blue-500 hover:underline">
                         Login here
-                    </a>
+                    </Link>
                 </p>
             </div>
         </div>

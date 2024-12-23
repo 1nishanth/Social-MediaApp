@@ -1,10 +1,12 @@
 
 import './App.css';
 import { BrowserRouter } from "react-router-dom";
-// import Pages from './Pages/Page';
 import Pages from './Components/Pages/Page';
+// import AuthProvider from './Components/context/AuthContext';
 import AuthProvider from './Components/context/AuthContext';
-import MediaProvider from './Components/context/MediaContext';
+import MediaProvider from './Components/context/PostContext';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
@@ -12,7 +14,9 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <MediaProvider>
-            <Pages></Pages>
+            <Pages>
+              <ToastContainer />
+            </Pages>
           </MediaProvider>
         </AuthProvider>
       </BrowserRouter>

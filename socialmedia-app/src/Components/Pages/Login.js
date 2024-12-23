@@ -1,17 +1,12 @@
-import React, { useState, useContext } from "react";
-// import {
-//     auth,
-//     provider,
-//     signInWithPopup,
-//     signInWithEmailAndPassword,
-//     createUserWithEmailAndPassword,
-//     onAuthStateChanged,
-// } from "../firebase/firebaseConfig";
-
-// import { AuthContext } from "../Context/AuthContext";
-import { AuthContext } from "../Context/AuthContext";
+import React, { useState, useContext, useEffect } from "react";
+import { auth, onAuthStateChanged } from "../firebase/firebaseConfig";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { AuthContext } from "../context/AuthContext";
 import loginImage from "../../assets/login.png";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 function Login() {
 
@@ -22,33 +17,26 @@ function Login() {
     const [password, setPassword] = useState("");
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
-    // const [user, setUser] = useState(null);
+    const [user, setUser] = useState(null);
 
 
-    // useEffect(() => {
-    //     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-    //         setUser(currentUser);
-    //     });
-    //     return () => unsubscribe();
-    // }, []);
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            setUser(currentUser);
+        });
+        return () => unsubscribe();
+    }, []);
 
-    // const handleGoogleLogin = async () => {
-    //     try {
-    //         const result = await signInWithPopup(auth, provider);
-    //         const user = result.user;
-    //         console.log("User Info:", user);
-    //         navigate("/feeds");
-
-    //     } catch (error) {
-    //         console.error("Error during Google login:", error.message);
-    //     }
-    // };
 
     const handleGoogleLogin = async () => {
         try {
             await loginWithGoogle();
+            toast.success("Successfully signed in!");
+            console.log("Succesfully Login")
             navigate("/feeds");
         } catch (error) {
+            toast.error("An error occurred. Please try again.");
+            console.log("Failed!")
             console.error("Google login error:", error.message);
         }
     };
@@ -56,111 +44,54 @@ function Login() {
     const handleFormSubmit = async (e) => {
         e.preventDefault();
 
-        // Reset Errors
+        // Reset errors
         setEmailError("");
         setPasswordError("");
 
+        let isValid = true;
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email) {
+            setEmailError("Email is required.");
+            isValid = false;
+        } else if (!emailRegex.test(email)) {
+            setEmailError("Please enter a valid email address.");
+            isValid = false;
+        }
+
+        // Validate password length
+        if (!password) {
+            setPasswordError("Password is required.");
+            isValid = false;
+        } else if (password.length < 4) {
+            setPasswordError("Password must be at least 4 characters.");
+            isValid = false;
+        }
+
+        if (!isValid) return;
+
         try {
-            await login(email, password);
+            // Sign in with email and password
+            const result = await signInWithEmailAndPassword(auth, email, password);
+            console.log("User successfully signed in:", result.user);
+            toast.success("Successfully signed in!");
             navigate("/feeds");
         } catch (error) {
+            console.error("Error during email/password login:", error.message);
+
             if (error.code === "auth/user-not-found") {
                 setEmailError("No user found with this email.");
+                toast.error("No user found with this email.");
             } else if (error.code === "auth/wrong-password") {
                 setPasswordError("Incorrect password.");
+                toast.error("Incorrect password.");
             } else {
-                console.error("Login error:", error.message);
+                toast.error("An error occurred. Please try again.");
             }
         }
     };
 
-
-    // const handleFormSubmit = async (e) => {
-    //     e.preventDefault();
-
-    //     // Reset errors
-    //     setEmailError("");
-    //     setPasswordError("");
-
-    //     let isValid = true;
-
-    //     // Validate email format
-    //     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    //     if (!email) {
-    //         setEmailError("Email is required.");
-    //         isValid = false;
-    //     } else if (!emailRegex.test(email)) {
-    //         setEmailError("Please enter a valid email address.");
-    //         isValid = false;
-    //     }
-
-    //     // Validate password length
-    //     if (!password) {
-    //         setPasswordError("Password is required.");
-    //         isValid = false;
-    //     } else if (password.length < 4) {
-    //         setPasswordError("Password must be at least 4 characters.");
-    //         isValid = false;
-    //     }
-
-    //     if (!isValid) return;
-
-    //     try {
-    //         // Sign in with email and password
-    //         const result = await signInWithEmailAndPassword(auth, email, password);
-    //         console.log("User successfully signed in:", result.user);
-    //         navigate("/feeds");
-    //     } catch (error) {
-    //         console.error("Error during email/password login:", error.message);
-    //         if (error.code === "auth/user-not-found") {
-    //             setEmailError("No user found with this email.");
-    //         } else if (error.code === "auth/wrong-password") {
-    //             setPasswordError("Incorrect password.");
-    //         }
-    //     }
-    // };
-
-    // const handleRegister = async (e) => {
-    //     e.preventDefault();
-
-    //     // Reset errors
-    //     setEmailError("");
-    //     setPasswordError("");
-
-    //     let isValid = true;
-
-    //     // Validate email and password (reuse same logic as above)
-    //     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    //     if (!email) {
-    //         setEmailError("Email is required.");
-    //         isValid = false;
-    //     } else if (!emailRegex.test(email)) {
-    //         setEmailError("Please enter a valid email address.");
-    //         isValid = false;
-    //     }
-
-    //     if (!password) {
-    //         setPasswordError("Password is required.");
-    //         isValid = false;
-    //     } else if (password.length < 4) {
-    //         setPasswordError("Password must be at least 4 characters.");
-    //         isValid = false;
-    //     }
-
-    //     if (!isValid) return;
-
-    //     // try {
-    //     //     // Register new user
-    //     //     const result = await createUserWithEmailAndPassword(auth, email, password);
-    //     //     console.log("User successfully registered:", result.user);
-    //     //     navigate("/feeds")
-    //     // } catch (error) {
-    //     //     console.error("Error during registration:", error.message);
-    //     //     if (error.code === "auth/email-already-in-use") {
-    //     //         setEmailError("Email is already in use.");
-    //     //     }
-    //     // }
-    // };
 
     return (
         <div className="flex flex-col items-center min-h-screen bg-gray-100">
@@ -243,7 +174,14 @@ function Login() {
 
                 {/* Heading and Subtitle */}
                 <div className="text-center mt-6">
-                    <h2 className="text-lg font-semibold text-gray-800">Vibesnap</h2>
+                    <div className="flex items-center justify-center">
+                        <img
+                            src={require("../../assets/logo.png")} // Adjust the path if needed
+                            alt="Logo"
+                            className="w-10 h-10 mr-2" // Adjust size and margin as needed
+                        />
+                        <h2 className="text-lg font-semibold text-gray-800">Vibesnap</h2>
+                    </div>
                     <p className="text-sm text-gray-500">Moments That Matter, Shared Forever.</p>
                 </div>
 

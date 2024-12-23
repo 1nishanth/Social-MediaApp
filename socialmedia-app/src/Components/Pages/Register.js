@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function Register() {
     const { register } = useContext(AuthContext);
@@ -47,7 +47,7 @@ function Register() {
                 <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
                 <form onSubmit={handleFormSubmit}>
                     <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-medium text-gray-700 text-left">
                             First Name
                         </label>
                         <input
@@ -65,7 +65,7 @@ function Register() {
                         )}
                     </div>
                     <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-medium text-gray-700 text-left">
                             Last Name
                         </label>
                         <input
@@ -83,7 +83,7 @@ function Register() {
                         )}
                     </div>
                     <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700">Email</label>
+                        <label className="block text-sm font-medium text-gray-700 text-left">Email</label>
                         <input
                             type="email"
                             className={`w-full p-2 border rounded ${errors.email ? "border-red-500" : "border-gray-300"
@@ -99,7 +99,7 @@ function Register() {
                         )}
                     </div>
                     <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-medium text-gray-700 text-left">
                             Password
                         </label>
                         <input
@@ -125,9 +125,9 @@ function Register() {
                 </form>
                 <p className="mt-4 text-sm text-center">
                     Already have an account?{" "}
-                    <a href="/login" className="text-blue-500 hover:underline">
+                    <Link to="/login" className="text-blue-500 hover:underline">
                         Login here
-                    </a>
+                    </Link>
                 </p>
             </div>
         </div>

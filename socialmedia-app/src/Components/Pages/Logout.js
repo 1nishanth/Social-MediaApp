@@ -1,30 +1,28 @@
 import React, { useContext } from "react";
-import { AuthContext } from "../context/AuthProvider";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
+import { AuthContext } from "../context/AuthContext";
 
 const Logout = () => {
     const { logout } = useContext(AuthContext);
     const navigate = useNavigate();
 
-
     const handleLogout = async () => {
         try {
             await logout();
-            console.log("Logged out successfully!");
+            console.log("Logout success");
+            toast.success("Logged out successfully!");
             navigate("/login");
         } catch (error) {
+            toast.error("Error during logout.");
             console.error("Error during logout:", error);
         }
     };
 
     return (
-        <button
-            onClick={handleLogout}
-            className="bg-red-500 text-white px-4 py-2 rounded"
-        >
-            Logout
-        </button>
+        <div onClick={handleLogout}>Logout</div>
     );
 };
 
